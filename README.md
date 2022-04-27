@@ -1,141 +1,96 @@
-<div align="center">
-    <a href="https://php.net">
-        <img
-            alt="PHP"
-            src="https://www.php.net/images/logos/new-php-logo.svg"
-            width="150">
-    </a>
-</div>
+# PeacheperoLang
 
-# The PHP Interpreter
+PeacheperoLang está basado en PHP, pero con una sintaxis mejorada y adaptada a
+las necesidades y capacidades de @MarcosBL.
 
-PHP is a popular general-purpose scripting language that is especially suited to
-web development. Fast, flexible and pragmatic, PHP powers everything from your
-blog to the most popular websites in the world. PHP is distributed under the
-[PHP License v3.01](LICENSE).
+### Compilando PeacheperoLang
 
-[![Build status](https://travis-ci.com/php/php-src.svg?branch=master)](https://travis-ci.com/php/php-src)
-[![Build status](https://ci.appveyor.com/api/projects/status/meyur6fviaxgdwdy/branch/master?svg=true)](https://ci.appveyor.com/project/php/php-src)
-[![Build Status](https://dev.azure.com/phpazuredevops/php/_apis/build/status/php.php-src?branchName=master)](https://dev.azure.com/phpazuredevops/php/_build/latest?definitionId=1&branchName=master)
-[![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/php.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:php)
-
-## Documentation
-
-The PHP manual is available at [php.net/docs](https://php.net/docs).
-
-## Installation
-
-### Prebuilt packages and binaries
-
-Prebuilt packages and binaries can be used to get up and running fast with PHP.
-
-For Windows, the PHP binaries can be obtained from
-[windows.php.net](https://windows.php.net). After extracting the archive the
-`*.exe` files are ready to use.
-
-For other systems, see the [installation chapter](https://php.net/install).
-
-### Building PHP source code
-
-*For Windows, see [Build your own PHP on Windows](https://wiki.php.net/internals/windows/stepbystepbuild_sdk_2).*
-
-For a minimal PHP build from Git, you will need autoconf, bison, and re2c. For
-a default build, you will additionally need libxml2 and libsqlite3.
-
-On Ubuntu, you can install these using:
+Para compilar PeacheperoLang necesitas instalar las siguientes cosas:
 
     sudo apt install -y pkg-config build-essential autoconf bison re2c \
-                        libxml2-dev libsqlite3-dev
+                        libxml2-dev libsqlite3-dev libreadline-dev
 
-On Fedora, you can install these using:
+Generar configuración:
 
-    sudo dnf install re2c bison autoconf make libtool ccache libxml2-devel sqlite-devel
+    ./buildconf --force
+    ./configure --with-readline --disable-phar
 
-Generate configure:
+Compilar PeacheperoLang:
 
-    ./buildconf
+    make -j8
 
-Configure your build. `--enable-debug` is recommended for development, see
-`./configure --help` for a full list of options.
-
-    # For development
-    ./configure --enable-debug
-    # For production
-    ./configure
-
-Build PHP. To speed up the build, specify the maximum number of jobs using `-j`:
-
-    make -j4
-
-The number of jobs should usually match the number of available cores, which
-can be determined using `nproc`.
-
-## Testing PHP source code
-
-PHP ships with an extensive test suite, the command `make test` is used after
-successful compilation of the sources to run this test suite.
-
-It is possible to run tests using multiple cores by setting `-jN` in
-`TEST_PHP_ARGS`:
-
-    make TEST_PHP_ARGS=-j4 test
-
-Shall run `make test` with a maximum of 4 concurrent jobs: Generally the maximum
-number of jobs should not exceed the number of cores available.
-
-The [qa.php.net](https://qa.php.net) site provides more detailed info about
-testing and quality assurance.
-
-## Installing PHP built from source
-
-After a successful build (and test), PHP may be installed with:
+## Instalando PeacheperoLang
 
     make install
 
-Depending on your permissions and prefix, `make install` may need super user
-permissions.
+## Probando PeacheperoLang
 
-## PHP extensions
+    ./sapi/cli/php -a
 
-Extensions provide additional functionality on top of PHP. PHP consists of many
-essential bundled extensions. Additional extensions can be found in the PHP
-Extension Community Library - [PECL](https://pecl.php.net).
 
-## Contributing
+## Cambios respecto a PHP
 
-The PHP source code is located in the Git repository at
-[github.com/php/php-src](https://github.com/php/php-src). Contributions are most
-welcome by forking the repository and sending a pull request.
+```
+include      -> padentro
+include_once -> padentro_una_vez
+eval         -> ñapa
+echo         -> ver
+print        -> el_otro_ver
+if           -> tal_vez
+elseif       -> y_sino
+else         -> y_si_no_ha_sido_nada_de_eso
+continue     -> circulen
+break        -> quietoooo
+function     -> plato_de_espagueti
+class        -> olla_de_espagueti
+namespace    -> cocina
+return       -> devolver
+try          -> esto_va_a_cascar
+catch        -> efectivamente_ha_cascado
+finally      -> y_para_terminar_el_apaño
+while        -> dar_vueltas
+var          -> variable
+empty        -> es_saldo_de_mi_cuenta_bancaria
+extends      -> no_usar_peligro
+enum         -> lista_de_cosas
+exit         -> marcho_que_teño_que_marchar
+foreach      -> pito_pito_gorgorito
+throw        -> a_tomar_por_culo
+```
 
-Discussions are done on GitHub, but depending on the topic can also be relayed
-to the official PHP developer mailing list internals@lists.php.net.
+## Ejemplos
 
-New features require an RFC and must be accepted by the developers. See
-[Request for comments - RFC](https://wiki.php.net/rfc) and
-[Voting on PHP features](https://wiki.php.net/rfc/voting) for more information
-on the process.
+```
+$ ./sapi/cli/php -a
+php > $res = ñapa('return 2+2;');
+php > ver $res;
+4
+php > tal_vez($a == "adios") {
+        el_otro_ver("es hola!");
+      } y_si_no_ha_sido_nada_de_eso {
+        ver("no es hola, es otra cosa");
+      }
+no es hola, es otra cosa
+php >
+php > marcho_que_teño_que_marchar
+$
+```
 
-Bug fixes don't require an RFC. If the bug has a GitHub issue, reference it in
-the commit message using `GH-NNNNNN`. Use `#NNNNNN` for tickets in the old
-[bugs.php.net](https://bugs.php.net) bug tracker.
 
-    Fix GH-7815: php_uname doesn't recognise latest Windows versions
-    Fix #55371: get_magic_quotes_gpc() throws deprecation warning
+## Para mejorar PeacheperoLang
 
-See [Git workflow](https://wiki.php.net/vcs/gitworkflow) for details on how pull
-requests are merged.
+Modificar el parser:
 
-### Guidelines for contributors
+```
+Zend/zend_language_parser.y
+Zend/zend_language_scanner.l
+```
 
-See further documents in the repository for more information on how to
-contribute:
+Limpiar antes de compilar de nuevo:
 
-- [Contributing to PHP](/CONTRIBUTING.md)
-- [PHP coding standards](/CODING_STANDARDS.md)
-- [Mailing list rules](/docs/mailinglist-rules.md)
-- [PHP release process](/docs/release-process.md)
-
-## Credits
-
-For the list of people who've put work into PHP, please see the
-[PHP credits page](https://php.net/credits.php).
+```
+make clean
+rm Zend/zend_language_parser.c
+rm Zend/zend_language_parser.h
+rm Zend/zend_language_scanner.c
+```

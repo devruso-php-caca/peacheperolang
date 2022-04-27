@@ -620,6 +620,7 @@ static zend_op_array *zend_compile(int type)
 		zend_emit_final_return(type == ZEND_USER_FUNCTION);
 		op_array->line_start = 1;
 		op_array->line_end = last_lineno;
+		zend_init_static_variables_map_ptr(op_array);
 		pass_two(op_array);
 		zend_oparray_context_end(&original_oparray_context);
 		zend_file_context_end(&original_file_context);
@@ -781,7 +782,7 @@ ZEND_API size_t zend_get_scanned_file_offset(void)
 	return offset;
 }
 
-zend_op_array *compile_string(zend_string *source_string, const char *filename, zend_compile_position position)
+zend_op_array *compile_string(zend_string *source_string, const char *filename)
 {
 	zend_lex_state original_lex_state;
 	zend_op_array *op_array = NULL;
@@ -798,19 +799,7 @@ zend_op_array *compile_string(zend_string *source_string, const char *filename, 
 	filename_str = zend_string_init(filename, strlen(filename), 0);
 	zend_prepare_string_for_scanning(&tmp, filename_str);
 	zend_string_release(filename_str);
-
-	switch (position) {
-		case ZEND_COMPILE_POSITION_AT_SHEBANG:
-			BEGIN(SHEBANG);
-			break;
-		case ZEND_COMPILE_POSITION_AT_OPEN_TAG:
-			BEGIN(INITIAL);
-			break;
-		case ZEND_COMPILE_POSITION_AFTER_OPEN_TAG:
-			BEGIN(ST_IN_SCRIPTING);
-			break;
-	}
-
+	BEGIN(ST_IN_SCRIPTING);
 	op_array = zend_compile(ZEND_EVAL_CODE);
 
 	zend_restore_lexical_state(&original_lex_state);
@@ -1372,7 +1361,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 /* compute yyleng before each rule */
 <!*> := yyleng = YYCURSOR - SCNG(yy_text);
 
-<ST_IN_SCRIPTING>"exit" {
+<ST_IN_SCRIPTING>"marcho_que_teño_que_marchar" {
 	RETURN_TOKEN_WITH_IDENT(T_EXIT);
 }
 
@@ -1384,7 +1373,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_FN);
 }
 
-<ST_IN_SCRIPTING>"function" {
+<ST_IN_SCRIPTING>"plato_de_espagueti" {
 	RETURN_TOKEN_WITH_IDENT(T_FUNCTION);
 }
 
@@ -1392,7 +1381,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_CONST);
 }
 
-<ST_IN_SCRIPTING>"return" {
+<ST_IN_SCRIPTING>"devolver" {
 	RETURN_TOKEN_WITH_IDENT(T_RETURN);
 }
 
@@ -1411,27 +1400,27 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_YIELD);
 }
 
-<ST_IN_SCRIPTING>"try" {
+<ST_IN_SCRIPTING>"esto_va_a_cascar" {
 	RETURN_TOKEN_WITH_IDENT(T_TRY);
 }
 
-<ST_IN_SCRIPTING>"catch" {
+<ST_IN_SCRIPTING>"efectivamente_ha_cascado" {
 	RETURN_TOKEN_WITH_IDENT(T_CATCH);
 }
 
-<ST_IN_SCRIPTING>"finally" {
+<ST_IN_SCRIPTING>"y_para_terminar_el_apaño" {
 	RETURN_TOKEN_WITH_IDENT(T_FINALLY);
 }
 
-<ST_IN_SCRIPTING>"throw" {
+<ST_IN_SCRIPTING>"a_tomar_por_culo" {
 	RETURN_TOKEN_WITH_IDENT(T_THROW);
 }
 
-<ST_IN_SCRIPTING>"if" {
+<ST_IN_SCRIPTING>"tal_vez" {
 	RETURN_TOKEN_WITH_IDENT(T_IF);
 }
 
-<ST_IN_SCRIPTING>"elseif" {
+<ST_IN_SCRIPTING>"y_sino" {
 	RETURN_TOKEN_WITH_IDENT(T_ELSEIF);
 }
 
@@ -1439,11 +1428,11 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_ENDIF);
 }
 
-<ST_IN_SCRIPTING>"else" {
+<ST_IN_SCRIPTING>"y_si_no_ha_sido_nada_de_eso" {
 	RETURN_TOKEN_WITH_IDENT(T_ELSE);
 }
 
-<ST_IN_SCRIPTING>"while" {
+<ST_IN_SCRIPTING>"dar_vueltas" {
 	RETURN_TOKEN_WITH_IDENT(T_WHILE);
 }
 
@@ -1463,7 +1452,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_ENDFOR);
 }
 
-<ST_IN_SCRIPTING>"foreach" {
+<ST_IN_SCRIPTING>"pito_pito_gorgorito" {
 	RETURN_TOKEN_WITH_IDENT(T_FOREACH);
 }
 
@@ -1507,11 +1496,11 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_DEFAULT);
 }
 
-<ST_IN_SCRIPTING>"break" {
+<ST_IN_SCRIPTING>"quietoooo" {
 	RETURN_TOKEN_WITH_IDENT(T_BREAK);
 }
 
-<ST_IN_SCRIPTING>"continue" {
+<ST_IN_SCRIPTING>"circulen" {
 	RETURN_TOKEN_WITH_IDENT(T_CONTINUE);
 }
 
@@ -1519,15 +1508,15 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_GOTO);
 }
 
-<ST_IN_SCRIPTING>"echo" {
+<ST_IN_SCRIPTING>"ver" {
 	RETURN_TOKEN_WITH_IDENT(T_ECHO);
 }
 
-<ST_IN_SCRIPTING>"print" {
+<ST_IN_SCRIPTING>"el_otro_ver" {
 	RETURN_TOKEN_WITH_IDENT(T_PRINT);
 }
 
-<ST_IN_SCRIPTING>"class" {
+<ST_IN_SCRIPTING>"olla_de_espagueti" {
 	RETURN_TOKEN_WITH_IDENT(T_CLASS);
 }
 
@@ -1543,16 +1532,16 @@ NEWLINE ("\r"|"\n"|"\r\n")
  * The enum keyword must be followed by whitespace and another identifier.
  * This avoids the BC break of using enum in classes, namespaces, functions and constants.
  */
-<ST_IN_SCRIPTING>"enum"{WHITESPACE}("extends"|"implements") {
+<ST_IN_SCRIPTING>"lista_de_cosas"{WHITESPACE}("no_usar_peligro"|"implements") {
 	yyless(4);
 	RETURN_TOKEN_WITH_STR(T_STRING, 0);
 }
-<ST_IN_SCRIPTING>"enum"{WHITESPACE}[a-zA-Z_\x80-\xff] {
+<ST_IN_SCRIPTING>"lista_de_cosas"{WHITESPACE}[a-zA-Z_\x80-\xff] {
 	yyless(4);
 	RETURN_TOKEN_WITH_IDENT(T_ENUM);
 }
 
-<ST_IN_SCRIPTING>"extends" {
+<ST_IN_SCRIPTING>"no_usar_peligro" {
 	RETURN_TOKEN_WITH_IDENT(T_EXTENDS);
 }
 
@@ -1613,7 +1602,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_CLONE);
 }
 
-<ST_IN_SCRIPTING>"var" {
+<ST_IN_SCRIPTING>"variable" {
 	RETURN_TOKEN_WITH_IDENT(T_VAR);
 }
 
@@ -1653,15 +1642,15 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN(T_UNSET_CAST);
 }
 
-<ST_IN_SCRIPTING>"eval" {
+<ST_IN_SCRIPTING>"ñapa" {
 	RETURN_TOKEN_WITH_IDENT(T_EVAL);
 }
 
-<ST_IN_SCRIPTING>"include" {
+<ST_IN_SCRIPTING>"padentro" {
 	RETURN_TOKEN_WITH_IDENT(T_INCLUDE);
 }
 
-<ST_IN_SCRIPTING>"include_once" {
+<ST_IN_SCRIPTING>"padentro_una_vez" {
 	RETURN_TOKEN_WITH_IDENT(T_INCLUDE_ONCE);
 }
 
@@ -1673,7 +1662,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_REQUIRE_ONCE);
 }
 
-<ST_IN_SCRIPTING>"namespace" {
+<ST_IN_SCRIPTING>"cocina" {
 	RETURN_TOKEN_WITH_IDENT(T_NAMESPACE);
 }
 
@@ -1693,7 +1682,7 @@ NEWLINE ("\r"|"\n"|"\r\n")
 	RETURN_TOKEN_WITH_IDENT(T_ISSET);
 }
 
-<ST_IN_SCRIPTING>"empty" {
+<ST_IN_SCRIPTING>"es_saldo_de_mi_cuenta_bancaria" {
 	RETURN_TOKEN_WITH_IDENT(T_EMPTY);
 }
 
